@@ -69,15 +69,15 @@ const data = {
     ]
 }
 
-const Header = ({ title, navigation }) =>
+const Header = ({ title, navigation, likeStatus, like, unlike }) =>
     <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.pop()}>
             <AntDesign name={'close'} size={25} color={'white'} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: '600', color: 'white' }}>{title}</Text>
-        <TouchableHighlight>
-            <MaterialIcons name={'favorite'} size={25} color={'white'} />
-        </TouchableHighlight>
+        <TouchableOpacity onPress={likeStatus === true ? () => { unlike() } : () => { like() }}>
+            <MaterialIcons name={likeStatus === true ? 'favorite' : 'favorite-border'} size={25} color={'white'} />
+        </TouchableOpacity>
     </View>
 
 class ResDetails extends Component {
@@ -102,12 +102,12 @@ class ResDetails extends Component {
             return <View></View>
     }
     render() {
-        const { modalVisible, showModal, hideModal, navigation } = this.props;
+        const { modalVisible, showModal, hideModal, navigation, like, likeHandle, unlikeHandle } = this.props;
         const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
         return (
 
             <View style={styles.container} >
-                <Header title={data.name} navigation={navigation} />
+                <Header title={data.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} />
                 <Modal style={styles.addModal}
                     animationType="slide"
                     transparent={true}
@@ -288,7 +288,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         showModal: (data) => dispatch({ type: 'SHOW_MODAL', data: data }),
-        hideModal: () => dispatch({ type: 'HIDE_MODAL' })
+        hideModal: () => dispatch({ type: 'HIDE_MODAL' }),
+        likeHandle: () => dispatch({ type: 'LIKE' }),
+        unlikeHandle: () => dispatch({ type: 'UNLIKE' }),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ResDetails);

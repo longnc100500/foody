@@ -66,11 +66,22 @@ export default function (state = initialState, action) {
         }
         case SUB_ITEM: {
             let newCart = { ...state.cart };
+            newCart.cart.amount -= 1;
+            newCart.total -= action.item.price;
+            newCart.cart.items.forEach(item => {
+                if (item.name === action.item.name) {
+                    item.amount -= 1;
+                }
+            })
+            let arr = newCart.items.filter(item => {
+                return item.amount !== 0;
+            }
+            )
+            return {
+                ...state,
+                cart: { ...newCart, items: [...arr] }
+            }
 
-
-
-
-            return state;
         }
         case REMOVE_ITEM: {
             let newItems = state.cart.items.filter(item => {
