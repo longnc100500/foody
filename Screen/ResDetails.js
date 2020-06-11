@@ -16,6 +16,10 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import { connect } from 'react-redux';
+import resDetails from '../redux/reducers/resDetails';
+
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const data = {
@@ -27,24 +31,39 @@ const data = {
     rating: 5,
     menu: [
         {
-            foodName: 'Mì Ý',
-            price: 40000,
+            infor: {
+                id: 1,
+                foodName: 'Mì Ý',
+                price: 40000,
+            }
         },
         {
-            foodName: 'Nui xào bò',
-            price: 54000,
+            infor: {
+                id: 2,
+                foodName: 'Nui xào bò',
+                price: 54000,
+            }
         },
         {
-            foodName: 'Mỳ xào hải sản',
-            price: 30000,
+            infor: {
+                id: 3,
+                foodName: 'Mỳ xào hải sản',
+                price: 30000,
+            }
         },
         {
-            foodName: 'Mỳ thêm',
-            price: 5000,
+            infor: {
+                id: 4,
+                foodName: 'Mỳ thêm',
+                price: 5000,
+            }
         },
         {
-            foodName: 'Bò thêm',
-            price: 15000,
+            infor: {
+                id: 5,
+                foodName: 'Bò thêm',
+                price: 15000,
+            }
         }
 
     ]
@@ -60,37 +79,31 @@ const Header = ({ title, navigation }) =>
             <MaterialIcons name={'favorite'} size={25} color={'white'} />
         </TouchableHighlight>
     </View>
-function renderItems(data, showModal) {
-    let arr = [];
-    arr = data.map((item) =>
-        <TouchableOpacity style={styles.foodBtn}
-            onPress={() => showModal()}
-        >
-            <Image
-                source={require('../Pics/login.jpg')}
-                style={styles.btnImg}
-            />
-            <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.foodName}</Text>
-            <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.price}</Text>
-        </TouchableOpacity>
 
-    )
-    return arr;
-}
 class ResDetails extends Component {
     constructor(props) {
         super(props);
-        this.state = { visible: false }
-        this.showModal = this.showModal.bind(this);
+        this.CartButton = this.CartButton.bind(this);
+
     }
-    showModal() {
-        const x = !this.state.visible;
-        console.log(x);
-        this.setState({ visible: x });
+
+    componentDidMount() {
+        console.log(this.props.cartData);
+        return true;
+    }
+    CartButton = (amount) => {
+        if (amount !== 0) {
+            return <TouchableOpacity style={styles.addToCartBtn}>
+                <Text style={{ fontSize: 20, fontWeight: '700' }}>Gio hang : {this.props.cartData.amount}</Text>
+            </TouchableOpacity>
+
+        }
+        else
+            return <View></View>
     }
     render() {
-        const modalVisible = this.state.modalVisible;
-        const { navigation } = this.props;
+        const { modalVisible, showModal, hideModal, navigation } = this.props;
+        const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
         return (
 
             <View style={styles.container} >
@@ -98,22 +111,31 @@ class ResDetails extends Component {
                 <Modal style={styles.addModal}
                     animationType="slide"
                     transparent={true}
-                    visible={this.state.visible}
+                    visible={modalVisible}
 
                 >
                     <View style={styles.modalView}>
                         <TouchableOpacity
                             style={{ position: 'absolute', top: 10, left: 10 }}
-                            onPress={() => { this.showModal(modalVisible) }}>
+                            onPress={() => { hideModal() }}>
                             <AntDesign name={'close'} size={25} color={'black'} />
                         </TouchableOpacity>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>Com chien nuoc mam</Text>
-                            <Text >25.000</Text>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{modalData.name}</Text>
+                            <Text >{modalData.price}</Text>
                         </View>
                         <TouchableOpacity style={styles.addToCartBtn}>
                             <Text style={{ fontSize: 20, fontWeight: '700' }}>Them vao gio hang</Text>
                         </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+                            <TouchableOpacity style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'red' }} >
+                                <Text style={{ fontSize: 40, fontWeight: 'bold' }}>+</Text>
+                            </TouchableOpacity>
+                            <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{modalData.currentAmount}</Text>
+                            <TouchableOpacity style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'yellowgreen' }} >
+                                <Text style={{ fontSize: 40, fontWeight: 'bold' }}>-</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
 
 
@@ -134,13 +156,27 @@ class ResDetails extends Component {
                         <View style={{ width: screenWidth, height: 1, backgroundColor: 'lightgray', marginVertical: 10 }}></View>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 5 }}>Menu</Text>
                         <View style={styles.mainMenu}>
-                            {renderItems(data.menu, this.showModal)}
+                            {/* {renderItems(data.menu, this.showModal)} */}
+                            <FlatList
+                                data={data.menu}
+                                numColumns={2}
+                                keyExtractor={(item) => item.infor.id.toString()}
+                                renderItem={({ item }) => <TouchableOpacity style={styles.foodBtn}
+                                    onPress={showModal}
+                                >
+                                    <Image
+                                        source={require('../Pics/login.jpg')}
+                                        style={styles.btnImg}
+                                    />
+                                    <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.foodName}</Text>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
+                                </TouchableOpacity>}
+                            />
                         </View>
                     </View>
                 </ScrollView>
-                <TouchableOpacity style={styles.addToCartBtn}>
-                    <Text style={{ fontSize: 20, fontWeight: '700' }}>Gio hang</Text>
-                </TouchableOpacity>
+
+                {this.CartButton(this.props.cartData.amount)}
 
             </View>
         )
@@ -242,4 +278,18 @@ const styles = StyleSheet.create({
     }
 
 })
-export default ResDetails;
+const mapStateToProps = (state) => {
+    return {
+        modalVisible: state.modal.visible,
+        cartData: state.resDetails.cart,
+        like: state.resDetails.like,
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        showModal: (data) => dispatch({ type: 'SHOW_MODAL', data: data }),
+        hideModal: () => dispatch({ type: 'HIDE_MODAL' })
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ResDetails);
+//export default resDetails;
