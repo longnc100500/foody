@@ -147,11 +147,18 @@ export default function (state = initialState, action) {
                 if (item.infor.id === action.item.infor.id)
                     oldItem = item;
             })
-            console.log(oldItem.amount - action.item.amount);
-            console.log(oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price);
+            console.log(oldItem);
+            console.log(newCart);
+            // console.log(oldItem.amount - action.item.amount);
+            // console.log(oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price);
             newCart.amount += oldItem.amount - action.item.amount;
+            console.log('new Amount ', oldItem.amount - action.item.amount);
             newCart.total += oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price;
+            console.log('new TOTAL : ', oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price)
             oldItem = action.item;
+            console.log('======================')
+            console.log(oldItem);
+            console.log(newCart);
             return {
                 ...state,
                 cart: newCart
