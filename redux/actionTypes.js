@@ -5,3 +5,5 @@ export const SUB_ITEM = "SUB_ITEM";
 export const REMOVE_ITEM = "REMOVE_ITEM";
 export const LIKE = "LIKE";
 export const UNLIKE = "UNLIKE";
+export const INCREASE = "INCREASE";
+export const DECREASE = "DECREASE";

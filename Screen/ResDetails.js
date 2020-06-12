@@ -29,44 +29,7 @@ const data = {
     end: '22:00',
     pics: 'https://www.foody.vn/ho-chi-minh/mi-xao-bo-trung-mi-y',
     rating: 5,
-    menu: [
-        {
-            infor: {
-                id: 1,
-                foodName: 'Mì Ý',
-                price: 40000,
-            }
-        },
-        {
-            infor: {
-                id: 2,
-                foodName: 'Nui xào bò',
-                price: 54000,
-            }
-        },
-        {
-            infor: {
-                id: 3,
-                foodName: 'Mỳ xào hải sản',
-                price: 30000,
-            }
-        },
-        {
-            infor: {
-                id: 4,
-                foodName: 'Mỳ thêm',
-                price: 5000,
-            }
-        },
-        {
-            infor: {
-                id: 5,
-                foodName: 'Bò thêm',
-                price: 15000,
-            }
-        }
 
-    ]
 }
 
 const Header = ({ title, navigation, likeStatus, like, unlike }) =>
@@ -88,7 +51,7 @@ class ResDetails extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.cartData);
+        console.log(this.props.modalData);
         return true;
     }
     CartButton = (amount) => {
@@ -102,37 +65,53 @@ class ResDetails extends Component {
             return <View></View>
     }
     render() {
-        const { modalVisible, showModal, hideModal, navigation, like, likeHandle, unlikeHandle } = this.props;
-        const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
+        const { modalData, showModal, hideModal, navigation, like, likeHandle, unlikeHandle, increase, decrease, addToCartHandle, resMenu } = this.props;
+        //const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
         return (
 
             <View style={styles.container} >
                 <Header title={data.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} />
-                <Modal style={styles.addModal}
+                <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalVisible}
+                    visible={modalData.visible}
 
                 >
                     <View style={styles.modalView}>
                         <TouchableOpacity
                             style={{ position: 'absolute', top: 10, left: 10 }}
-                            onPress={() => { hideModal() }}>
+                            onPress={() => { hideModal() }}
+
+                        >
                             <AntDesign name={'close'} size={25} color={'black'} />
                         </TouchableOpacity>
                         <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{modalData.name}</Text>
-                            <Text >{modalData.price}</Text>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{modalData.item.infor.name}</Text>
+                            <Text >{modalData.item.infor.price}</Text>
                         </View>
-                        <TouchableOpacity style={styles.addToCartBtn}>
+                        <TouchableOpacity
+                            style={styles.addToCartBtn}
+                            onPress={() => {
+                                addToCartHandle(modalData.item);
+                                hideModal()
+                            }}
+                        >
                             <Text style={{ fontSize: 20, fontWeight: '700' }}>Them vao gio hang</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                            <TouchableOpacity style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'red' }} >
+                            <TouchableOpacity
+                                style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'red' }}
+                                onPress={() => { increase() }}
+                                disabled={modalData.max === modalData.item.amount ? true : false}
+                            >
                                 <Text style={{ fontSize: 40, fontWeight: 'bold' }}>+</Text>
                             </TouchableOpacity>
-                            <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{modalData.currentAmount}</Text>
-                            <TouchableOpacity style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'yellowgreen' }} >
+                            <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{modalData.item.amount}</Text>
+                            <TouchableOpacity
+                                style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'yellowgreen' }}
+                                onPress={() => { decrease() }}
+                                disabled={modalData.min === modalData.item.amount ? true : false}
+                            >
                                 <Text style={{ fontSize: 40, fontWeight: 'bold' }}>-</Text>
                             </TouchableOpacity>
                         </View>
@@ -158,17 +137,17 @@ class ResDetails extends Component {
                         <View style={styles.mainMenu}>
                             {/* {renderItems(data.menu, this.showModal)} */}
                             <FlatList
-                                data={data.menu}
+                                data={resMenu}
                                 numColumns={2}
                                 keyExtractor={(item) => item.infor.id.toString()}
                                 renderItem={({ item }) => <TouchableOpacity style={styles.foodBtn}
-                                    onPress={showModal}
+                                    onPress={() => showModal(item)}
                                 >
                                     <Image
                                         source={require('../Pics/login.jpg')}
                                         style={styles.btnImg}
                                     />
-                                    <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.foodName}</Text>
+                                    <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.name}</Text>
                                     <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
                                 </TouchableOpacity>}
                             />
@@ -243,15 +222,17 @@ const styles = StyleSheet.create({
 
     },
     modalView: {
-        margin: 20,
+        position: 'absolute',
+        bottom: 0,
         borderRadius: 20,
         backgroundColor: 'white',
         padding: 10,
         alignItems: "center",
         justifyContent: 'center',
         shadowColor: "#000",
-        width: screenWidth * 0.9,
-        height: screenHeight * 0.9,
+        width: screenWidth,
+        height: screenHeight * 0.8,
+
         shadowOffset: {
             width: 0,
             height: 2
@@ -280,17 +261,21 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (state) => {
     return {
-        modalVisible: state.modal.visible,
+        resMenu: state.resDetails.menu,
         cartData: state.resDetails.cart,
         like: state.resDetails.like,
+        modalData: state.modal,
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        showModal: (data) => dispatch({ type: 'SHOW_MODAL', data: data }),
+        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data }),
         hideModal: () => dispatch({ type: 'HIDE_MODAL' }),
         likeHandle: () => dispatch({ type: 'LIKE' }),
         unlikeHandle: () => dispatch({ type: 'UNLIKE' }),
+        increase: () => dispatch({ type: 'INCREASE' }),
+        decrease: () => dispatch({ type: 'DECREASE' }),
+        addToCartHandle: (item) => dispatch({ type: 'ADD_ITEM', item: item })
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ResDetails);

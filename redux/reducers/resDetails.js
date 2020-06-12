@@ -5,7 +5,49 @@ const initialState = {
         total: 0,
         amount: 0,
         items: []
-    }
+    },
+    menu: [
+        {
+            //amount: 0,
+            infor: {
+                id: 1,
+                name: 'Mì Ý',
+                price: 40000,
+            }
+        },
+        {
+            //amount: 0,
+            infor: {
+                id: 2,
+                name: 'Nui xào bò',
+                price: 54000,
+            }
+        },
+        {
+            //amount: 0,
+            infor: {
+                id: 3,
+                name: 'Mỳ xào hải sản',
+                price: 30000,
+            }
+        },
+        {
+            //amount: 0,
+            infor: {
+                id: 4,
+                name: 'Mỳ thêm',
+                price: 5000,
+            }
+        },
+        {
+            //amount: 0,
+            infor: {
+                id: 5,
+                name: 'Bò thêm',
+                price: 15000,
+            }
+        }
+    ]
 }
 var it = {
     amount: 1,
@@ -30,20 +72,20 @@ export default function (state = initialState, action) {
             }
         }
         case ADD_ITEM: {
-            var count = action.amount + state.cart.amount;
+            var count = action.item.amount + state.cart.amount;
             var newItem = { ...action.item };
             let t = 0;
             state.cart.items.forEach(item => {
-                if (item.infor.name === action.item.name) {
+                if (item.infor.name === action.item.infor.name) {
                     t++;
                 }
             })
             let newCart = { ...state.cart };
             if (t == 0) {
 
-                newCart.amount += item.amount;
-                newCart.total += item.amount * item.price;
-                newCart.items = [...newCart.items, item];
+                newCart.amount += action.item.amount;
+                newCart.total += action.item.amount * action.item.infor.price;
+                newCart.items = [...newCart.items, action.item];
                 return {
                     ...state,
                     cart: { ...newCart }
@@ -54,7 +96,7 @@ export default function (state = initialState, action) {
                 newCart.amount += item.amount;
                 newCart.total += item.amount * item.price;
                 newCart.items.forEach(item => {
-                    if (item.name == action.item.name) {
+                    if (item.name == action.item.infor.name) {
                         item.amount += action.item.amount;
                     }
                 })
@@ -67,9 +109,9 @@ export default function (state = initialState, action) {
         case SUB_ITEM: {
             let newCart = { ...state.cart };
             newCart.cart.amount -= 1;
-            newCart.total -= action.item.price;
+            newCart.total -= action.item.infor.price;
             newCart.cart.items.forEach(item => {
-                if (item.name === action.item.name) {
+                if (item.name === action.item.infor.name) {
                     item.amount -= 1;
                 }
             })
@@ -85,11 +127,11 @@ export default function (state = initialState, action) {
         }
         case REMOVE_ITEM: {
             let newItems = state.cart.items.filter(item => {
-                return item.name !== action.item.name;
+                return item.name !== action.item.infor.name;
             });
             let newCart = { ...state.cart };
             newCart.amount -= action.item.amount;
-            newCart.total -= action.item.amount * action.item.price;
+            newCart.total -= action.item.amount * action.item.infor.price;
 
             return {
                 ...state,
