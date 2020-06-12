@@ -1,4 +1,4 @@
-import { ADD_ITEM, SUB_ITEM, REMOVE_ITEM, SHOW_MODAL, HIDE_MODAL } from './actionTypes';
+import { ADD_ITEM, SUB_ITEM, REMOVE_ITEM, SHOW_MODAL, HIDE_MODAL, UPDATE_FOOD } from './actionTypes';
 export const addItem = item => ({
     type: ADD_ITEM,
     item: item,
@@ -18,3 +18,7 @@ export const showModal = (data) => ({
 export const hideModal = () => ({
     type: HIDE_MODAL,
 })
+export const updateFood = (item) => ({
+    type: UPDATE_FOOD,
+    item: item
+}) 

@@ -1,4 +1,4 @@
-import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM } from '../actionTypes';
+import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD } from '../actionTypes';
 const initialState = {
     like: false,
     cart: {
@@ -8,7 +8,7 @@ const initialState = {
     },
     menu: [
         {
-            //amount: 0,
+            amount: 1,
             infor: {
                 id: 1,
                 name: 'Mì Ý',
@@ -16,7 +16,7 @@ const initialState = {
             }
         },
         {
-            //amount: 0,
+            amount: 1,
             infor: {
                 id: 2,
                 name: 'Nui xào bò',
@@ -24,7 +24,7 @@ const initialState = {
             }
         },
         {
-            //amount: 0,
+            amount: 1,
             infor: {
                 id: 3,
                 name: 'Mỳ xào hải sản',
@@ -32,7 +32,7 @@ const initialState = {
             }
         },
         {
-            //amount: 0,
+            amount: 1,
             infor: {
                 id: 4,
                 name: 'Mỳ thêm',
@@ -40,7 +40,7 @@ const initialState = {
             }
         },
         {
-            //amount: 0,
+            amount: 1,
             infor: {
                 id: 5,
                 name: 'Bò thêm',
@@ -137,6 +137,26 @@ export default function (state = initialState, action) {
                 ...state,
                 cart: { ...newCart }
             }
+
+        }
+        case UPDATE_FOOD: {
+
+            let newCart = { ...state.cart };
+            let oldItem;
+            newCart.items.forEach(item => {
+                if (item.infor.id === action.item.infor.id)
+                    oldItem = item;
+            })
+            console.log(oldItem.amount - action.item.amount);
+            console.log(oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price);
+            newCart.amount += oldItem.amount - action.item.amount;
+            newCart.total += oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price;
+            oldItem = action.item;
+            return {
+                ...state,
+                cart: newCart
+            }
+
 
         }
         default: {

@@ -48,7 +48,7 @@ const HomeStackScreen = () =>
     <HomeStack.Screen name="Home" component={Home} />
     <HomeStack.Screen name="Search" component={Search} />
     <HomeStack.Screen name="FoodDetails" component={FoodDetails} />
-
+    <HomeStack.Screen name="Order" component={Order} />
   </HomeStack.Navigator>
 const tabOption = (route) => ({
   tabBarLabel: router.name,

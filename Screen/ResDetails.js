@@ -54,9 +54,11 @@ class ResDetails extends Component {
         console.log(this.props.modalData);
         return true;
     }
-    CartButton = (amount) => {
+    CartButton = (amount, navigation) => {
         if (amount !== 0) {
-            return <TouchableOpacity style={styles.addToCartBtn}>
+            return <TouchableOpacity style={styles.addToCartBtn}
+                onPress={() => navigation.navigate('Order')}
+            >
                 <Text style={{ fontSize: 20, fontWeight: '700' }}>Gio hang : {this.props.cartData.amount}</Text>
             </TouchableOpacity>
 
@@ -155,7 +157,7 @@ class ResDetails extends Component {
                     </View>
                 </ScrollView>
 
-                {this.CartButton(this.props.cartData.amount)}
+                {this.CartButton(this.props.cartData.amount, navigation)}
 
             </View>
         )

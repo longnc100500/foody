@@ -8,35 +8,98 @@ import {
     Text,
     StyleSheet,
     Dimensions,
+    FlatList,
+    Modal
 } from 'react-native';
+
+import { connect } from 'react-redux';
+
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const data = {
 
 
 }
+const separate = () => <View style={{ width: '100%', height: 1, backgroundColor: 'lightgray', marginVertical: 5 }}></View>
 
-class UserProfile extends Component {
+class Order extends Component {
     render() {
+
+        const { navigation, cartData, showModal, hideModal, modalData, increase, decrease, updateFood } = this.props;
+        console.log(cartData);
         return (
             <View style={styles.container}>
                 <View style={styles.layer}></View>
                 <View style={styles.header}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Order</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.pop()}
+                    >
+                        <Text style={{ color: 'white', fontSize: 18 }}>Close</Text>
+                    </TouchableOpacity>
                 </View>
 
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalData.visible}
 
+                >
+                    <View style={styles.modalView}>
+                        <TouchableOpacity
+                            style={{ position: 'absolute', top: 10, left: 10 }}
+                            onPress={() => { hideModal() }}
+
+                        >
+                            <AntDesign name={'close'} size={25} color={'black'} />
+                        </TouchableOpacity>
+                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold' }}>{modalData.item.infor.name}</Text>
+                            <Text >{modalData.item.infor.price}</Text>
+                        </View>
+                        <TouchableOpacity
+                            style={styles.addToCartBtn}
+                            onPress={() => {
+                                updateFood(modalData.item);
+                                hideModal()
+                            }}
+                        >
+                            <Text style={{ fontSize: 20, fontWeight: '700' }}>Cập nhật</Text>
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+                            <TouchableOpacity
+                                style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'red' }}
+                                onPress={() => { increase() }}
+                                disabled={modalData.max === modalData.item.amount ? true : false}
+                            >
+                                <Text style={{ fontSize: 40, fontWeight: 'bold' }}>+</Text>
+                            </TouchableOpacity>
+                            <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{modalData.item.amount}</Text>
+                            <TouchableOpacity
+                                style={{ margin: 20, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, backgroundColor: 'yellowgreen' }}
+                                onPress={() => { decrease() }}
+                                disabled={modalData.min === modalData.item.amount ? true : false}
+                            >
+                                <Text style={{ fontSize: 40, fontWeight: 'bold' }}>-</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+
+                </Modal>
 
 
                 <View style={styles.userInf}>
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5 }}>
                             <Text style={{ fontSize: 20, fontWeight: '600' }}>Subtotal</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}$</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total}$</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5 }}>
                             <Text style={{ fontSize: 20, fontWeight: '600' }}>Tax & fees</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}$</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{2}$</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
                             <Text style={{ fontSize: 20, fontWeight: '600' }}>Delivery</Text>
@@ -47,32 +110,29 @@ class UserProfile extends Component {
                     <View style={{ backgroundColor: '#DAD9E2', width: '100%', height: 1, marginBottom: 10, }}></View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Text style={{ fontSize: 20, fontWeight: '600' }}>Total</Text>
-                        <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}$</Text>
+                        <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total + 2}$</Text>
                     </View>
                 </View>
                 <View style={styles.controlView}>
-                    <ScrollView >
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Point</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}</Text>
-                        </TouchableOpacity>
+                    <FlatList
+                        data={cartData.items}
+                        keyExtractor={(item) => item.infor.id.toString()}
+                        renderItem={({ item }) =>
+                            <TouchableOpacity
+                                onPress={() => showModal(item)}
+                                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Text style={{ fontSize: 20, fontWeight: '600' }}>{item.infor.name}</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{item.amount}</Text>
+                            </TouchableOpacity>
+                        }
+                        ItemSeparatorComponent={separate}
+                    />
 
-                        <View style={{ backgroundColor: '#DAD9E2', width: '100%', height: 1, marginVertical: 10, }}></View>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Point</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}</Text>
-                        </TouchableOpacity>
-                        <View style={{ backgroundColor: '#DAD9E2', width: '100%', height: 1, marginVertical: 10, }}></View>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Point</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}</Text>
-                        </TouchableOpacity>
-                        <View style={{ backgroundColor: '#DAD9E2', width: '100%', height: 1, marginVertical: 10, }}></View>
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Point</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{data.userPoint}</Text>
-                        </TouchableOpacity>
-                    </ScrollView>
+
+
+
+
+
 
                 </View>
                 <TouchableOpacity style={styles.checkoutBtn}>
@@ -83,7 +143,7 @@ class UserProfile extends Component {
         )
     }
 }
-export default UserProfile;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -157,8 +217,65 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         //borderWidth: 2,
 
+    },
+    modalView: {
+        position: 'absolute',
+        bottom: 0,
+        borderRadius: 20,
+        backgroundColor: 'white',
+        padding: 10,
+        alignItems: "center",
+        justifyContent: 'center',
+        shadowColor: "#000",
+        width: screenWidth,
+        height: screenHeight * 0.8,
+
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    addToCartBtn: {
+        position: 'absolute',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 40,
+        width: '95%',
+        height: 50,
+        backgroundColor: 'pink',
+        borderRadius: 5,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        shadowColor: "#000",
     }
 
 
 
 });
+const mapStateToProps = (state) => {
+    return {
+        resMenu: state.resDetails.menu,
+        cartData: state.resDetails.cart,
+        like: state.resDetails.like,
+        modalData: state.modal,
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data }),
+        hideModal: () => dispatch({ type: 'HIDE_MODAL' }),
+        likeHandle: () => dispatch({ type: 'LIKE' }),
+        unlikeHandle: () => dispatch({ type: 'UNLIKE' }),
+        increase: () => dispatch({ type: 'INCREASE' }),
+        decrease: () => dispatch({ type: 'DECREASE' }),
+        addToCartHandle: (item) => dispatch({ type: 'ADD_ITEM', item: item }),
+        updateFood: (item) => dispatch({ type: 'UPDATE_FOOD', item: item }),
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Order)

@@ -20,10 +20,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 visible: true,
-                item: {
-                    infor: { ...action.item.infor },
-                    amount: 1,
-                }
+                item: action.item
             }
         case HIDE_MODAL:
             return {

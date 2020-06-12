@@ -27,7 +27,7 @@ class UserProfile extends Component {
                 <View style={styles.layer}></View>
                 <View style={styles.header}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Profile</Text>
-                    <TouchableOpacity ><Text style={{ color: 'white', fontSize: 18 }}>Edit</Text></TouchableOpacity>
+
                 </View>
 
                 <View style={styles.userInf}>

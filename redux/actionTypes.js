@@ -7,3 +7,4 @@ export const LIKE = "LIKE";
 export const UNLIKE = "UNLIKE";
 export const INCREASE = "INCREASE";
 export const DECREASE = "DECREASE";
+export const UPDATE_FOOD = "UPDATE_FOOD";
