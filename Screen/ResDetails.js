@@ -122,7 +122,7 @@ class ResDetails extends Component {
 
                 </Modal>
 
-                <ScrollView>
+                <View>
                     <View style={styles.mainView}>
                         <Image
                             style={styles.avatarImg}
@@ -155,7 +155,7 @@ class ResDetails extends Component {
                             />
                         </View>
                     </View>
-                </ScrollView>
+                </View>
 
                 {this.CartButton(this.props.cartData.amount, navigation)}
 
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     },
     avatarImg: {
         width: screenWidth,
-        height: 150,
+        height: 149,
         resizeMode: 'center',
     },
     popularView: {

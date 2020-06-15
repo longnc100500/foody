@@ -28,7 +28,7 @@ class Order extends Component {
     render() {
 
         const { navigation, cartData, showModal, hideModal, modalData, increase, decrease, updateFood } = this.props;
-        //console.log(cartData);
+        console.log(cartData);
         return (
             <View style={styles.container}>
                 <View style={styles.layer}></View>

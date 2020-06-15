@@ -1,4 +1,5 @@
 import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD } from '../actionTypes';
+import { cos } from 'react-native-reanimated';
 const initialState = {
     like: false,
     cart: {
@@ -147,18 +148,18 @@ export default function (state = initialState, action) {
                 if (item.infor.id === action.item.infor.id)
                     oldItem = item;
             })
-            console.log(oldItem);
-            console.log(newCart);
-            // console.log(oldItem.amount - action.item.amount);
-            // console.log(oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price);
-            newCart.amount += oldItem.amount - action.item.amount;
-            console.log('new Amount ', oldItem.amount - action.item.amount);
-            newCart.total += oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price;
-            console.log('new TOTAL : ', oldItem.amount * oldItem.infor.price - action.item.amount * action.item.price)
-            oldItem = action.item;
-            console.log('======================')
-            console.log(oldItem);
-            console.log(newCart);
+
+            if (oldItem.amount < action.item.amount) {
+                let t = action.item.amount - oldItem.amount;
+                newCart.amount += t;
+                newCart.total += t * action.item.infor.price;
+            }
+            else {
+                let t = oldItem.amount - action.item.amount;
+                newCart.amount -= t;
+                newCart.total -= t * action.item.infor.price;
+            }
+            oldItem.amount = action.item.amount;
             return {
                 ...state,
                 cart: newCart
