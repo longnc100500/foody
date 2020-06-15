@@ -28,7 +28,7 @@ class Order extends Component {
     render() {
 
         const { navigation, cartData, showModal, hideModal, modalData, increase, decrease, updateFood } = this.props;
-        console.log(cartData);
+        // console.log(cartData);
         return (
             <View style={styles.container}>
                 <View style={styles.layer}></View>
@@ -44,7 +44,7 @@ class Order extends Component {
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalData.visible}
+                    visible={modalData.orderModalVisible}
 
                 >
                     <View style={styles.modalView}>
@@ -66,7 +66,7 @@ class Order extends Component {
                                 hideModal()
                             }}
                         >
-                            <Text style={{ fontSize: 20, fontWeight: '700' }}>Cập nhật</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Cập nhật</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                             <TouchableOpacity
@@ -244,7 +244,8 @@ const styles = StyleSheet.create({
         bottom: 40,
         width: '95%',
         height: 50,
-        backgroundColor: 'pink',
+        backgroundColor: '#ed185f',
+        color: 'white',
         borderRadius: 5,
         shadowOffset: {
             width: 0,
@@ -268,8 +269,8 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data }),
-        hideModal: () => dispatch({ type: 'HIDE_MODAL' }),
+        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data, flag: 1 }),
+        hideModal: () => dispatch({ type: 'HIDE_MODAL', flag: 1 }),
         likeHandle: () => dispatch({ type: 'LIKE' }),
         unlikeHandle: () => dispatch({ type: 'UNLIKE' }),
         increase: () => dispatch({ type: 'INCREASE' }),

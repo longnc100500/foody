@@ -8,3 +8,4 @@ export const UNLIKE = "UNLIKE";
 export const INCREASE = "INCREASE";
 export const DECREASE = "DECREASE";
 export const UPDATE_FOOD = "UPDATE_FOOD";
+export const CLEAR_CART_DATA = "CLEAR_CART_DATA"

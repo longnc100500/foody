@@ -1,5 +1,4 @@
-import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD } from '../actionTypes';
-import { cos } from 'react-native-reanimated';
+import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD, CLEAR_CART_DATA } from '../actionTypes';
 const initialState = {
     like: false,
     cart: {
@@ -166,6 +165,16 @@ export default function (state = initialState, action) {
             }
 
 
+        }
+        case CLEAR_CART_DATA: {
+            return {
+                ...state,
+                cart: {
+                    total: 0,
+                    amount: 0,
+                    items: []
+                },
+            }
         }
         default: {
             return state;

@@ -1,6 +1,7 @@
 import { SHOW_MODAL, HIDE_MODAL, INCREASE, DECREASE } from '../actionTypes';
 const initialState = {
-    visible: false,
+    orderModalVisible: false,
+    resModalVisible: false,
     min: 1,
     max: 50,
 
@@ -17,17 +18,36 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case SHOW_MODAL:
-            return {
-                ...state,
-                visible: true,
-                item: action.item
+            if (action.flag === 1) {
+                return {
+                    ...state,
+                    orderModalVisible: true,
+                    item: action.item
+                }
+            }
+            else {
+                return {
+                    ...state,
+                    resModalVisible: true,
+                    item: action.item
+                }
             }
         case HIDE_MODAL:
-            return {
-                ...state,
-                visible: false,
+            if (action.flag === 1) {
+                return {
+                    ...state,
+                    orderModalVisible: false,
 
+                }
             }
+            else {
+                return {
+                    ...state,
+                    resModalVisible: false,
+
+                }
+            }
+
         case INCREASE: {
             return {
                 ...state,

@@ -10,7 +10,8 @@ import {
     TouchableHighlight,
     Dimensions,
     TextInput,
-    Modal
+    Modal,
+    Alert,
 
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -31,10 +32,40 @@ const data = {
     rating: 5,
 
 }
+const alertUser = (clearCart, navigation) => Alert.alert('Rời khỏi nhà hàng', 'Nếu rời khỏi nhà hàng, các món bạn đã chọn sẽ bị xoá. Bạn có chắc chắn chưa ?', [
+    { text: 'Vẫn ở lại', style: 'cancel', }, { text: 'Đồng ý', style: 'default', onPress: () => { clearCart(); navigation.pop() } }
+])
+const renderItems = (items, showModal) => {
 
-const Header = ({ title, navigation, likeStatus, like, unlike }) =>
+    let arr = [];
+    arr = items.map(item =>
+        <TouchableOpacity style={styles.foodBtn}
+            onPress={() => showModal(item)}
+        >
+            <Image
+                source={require('../Pics/login.jpg')}
+                style={styles.btnImg}
+            />
+            <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.name}</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
+        </TouchableOpacity>
+    )
+    return arr;
+
+}
+
+const Header = ({ title, navigation, likeStatus, like, unlike, cartData, clearCart }) =>
     <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.pop()}>
+        <TouchableOpacity onPress={() => {
+            // clearCart();
+            // navigation.pop();
+
+
+            if (cartData.amount != 0)
+                alertUser(clearCart, navigation);
+            else
+                navigation.pop();
+        }}>
             <AntDesign name={'close'} size={25} color={'white'} />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: '600', color: 'white' }}>{title}</Text>
@@ -51,15 +82,16 @@ class ResDetails extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.modalData);
+        //console.log(this.props.modalData);
         return true;
     }
+
     CartButton = (amount, navigation) => {
         if (amount !== 0) {
             return <TouchableOpacity style={styles.addToCartBtn}
                 onPress={() => navigation.navigate('Order')}
             >
-                <Text style={{ fontSize: 20, fontWeight: '700' }}>Gio hang : {this.props.cartData.amount}</Text>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Gio hang : {this.props.cartData.amount}</Text>
             </TouchableOpacity>
 
         }
@@ -67,16 +99,16 @@ class ResDetails extends Component {
             return <View></View>
     }
     render() {
-        const { modalData, showModal, hideModal, navigation, like, likeHandle, unlikeHandle, increase, decrease, addToCartHandle, resMenu } = this.props;
+        const { modalData, showModal, hideModal, navigation, like, likeHandle, unlikeHandle, increase, decrease, addToCartHandle, resMenu, clearCartData, cartData } = this.props;
         //const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
         return (
 
             <View style={styles.container} >
-                <Header title={data.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} />
+                <Header title={data.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} clearCart={clearCartData} cartData={cartData} />
                 <Modal
                     animationType="slide"
                     transparent={true}
-                    visible={modalData.visible}
+                    visible={modalData.resModalVisible}
 
                 >
                     <View style={styles.modalView}>
@@ -98,7 +130,7 @@ class ResDetails extends Component {
                                 hideModal()
                             }}
                         >
-                            <Text style={{ fontSize: 20, fontWeight: '700' }}>Them vao gio hang</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Thêm vào giỏ sklldksjglds hàng</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                             <TouchableOpacity
@@ -122,7 +154,7 @@ class ResDetails extends Component {
 
                 </Modal>
 
-                <View>
+                <ScrollView>
                     <View style={styles.mainView}>
                         <Image
                             style={styles.avatarImg}
@@ -138,7 +170,8 @@ class ResDetails extends Component {
                         <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 5 }}>Menu</Text>
                         <View style={styles.mainMenu}>
                             {/* {renderItems(data.menu, this.showModal)} */}
-                            <FlatList
+                            {renderItems(resMenu, showModal)}
+                            {/* <FlatList
                                 data={resMenu}
                                 numColumns={2}
                                 keyExtractor={(item) => item.infor.id.toString()}
@@ -152,10 +185,10 @@ class ResDetails extends Component {
                                     <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.name}</Text>
                                     <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
                                 </TouchableOpacity>}
-                            />
+                            /> */}
                         </View>
                     </View>
-                </View>
+                </ScrollView>
 
                 {this.CartButton(this.props.cartData.amount, navigation)}
 
@@ -249,7 +282,8 @@ const styles = StyleSheet.create({
         bottom: 40,
         width: '95%',
         height: 50,
-        backgroundColor: 'pink',
+        backgroundColor: '#ed185f',
+        color: 'white',
         borderRadius: 5,
         shadowOffset: {
             width: 0,
@@ -271,13 +305,14 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data }),
-        hideModal: () => dispatch({ type: 'HIDE_MODAL' }),
+        showModal: (data) => dispatch({ type: 'SHOW_MODAL', item: data, flag: 2 }),
+        hideModal: () => dispatch({ type: 'HIDE_MODAL', flag: 2 }),
         likeHandle: () => dispatch({ type: 'LIKE' }),
         unlikeHandle: () => dispatch({ type: 'UNLIKE' }),
         increase: () => dispatch({ type: 'INCREASE' }),
         decrease: () => dispatch({ type: 'DECREASE' }),
-        addToCartHandle: (item) => dispatch({ type: 'ADD_ITEM', item: item })
+        addToCartHandle: (item) => dispatch({ type: 'ADD_ITEM', item: item }),
+        clearCartData: () => dispatch({ type: 'CLEAR_CART_DATA' }),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ResDetails);
