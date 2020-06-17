@@ -13,20 +13,43 @@ import {
 
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { Popular } from '../ResData';
-import { connect } from 'react-redux';
-
 //import Entypo from 'react-native-vector-icons/Entypo';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+const day = new Date(2018, 11, 24, 10, 32);
+
+const data = [
+    {
+        id: 1,
+
+        time: day.toString(),
+        resID: 1,
+        cartData: {
+            total: 0,
+            amount: 0,
+            items: []
+        }
+    },
+    {
+        id: 2,
+        time: day.toString(),
+        cartData: {
+            total: 0,
+            amount: 0,
+            items: []
+        }
+    }
+]
+
+
 function renderSectionData(items) {
     let arr = [];
     items.forEach(function (item) {
         let tmp =
             <TouchableOpacity style={styles.sectionItemsBtn}>
                 <Image style={styles.sectionImg}
-                    source={{ uri: item.pics }}
+                    source={require('../Pics/home1.jpg')}
                 />
                 <View style={styles.sectionInf}>
                     <Text style={{ fontSize: 18, fontWeight: '500' }}>
@@ -52,8 +75,24 @@ function renderSectionData(items) {
 
 
 }
+const Header = () =>
+    <View style={styles.header}>
+        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, }}>History</Text>
+        <View style={styles.searchBar}>
+            <FontAwesome5 size={23} name={'search'} style={{ marginLeft: 5, marginTop: 8, color: 'lightgray' }} />
+            <TextInput placeholder='Place, food , ect.'
+                style={{
+                    marginTop: 15,
 
+                    height: 40,
 
+                    color: 'black',
+                    borderRadius: 5,
+                    padding: 5,
+                    flex: 1,
+                }} />
+        </View>
+    </View>
 const Section = ({ title, items }) =>
     <View style={styles.sectionContainer}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10, paddingRight: 20 }}>
@@ -67,84 +106,35 @@ const Section = ({ title, items }) =>
             {renderSectionData(items)}
         </ScrollView>
     </View>
-class Favorite extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { items: Popular }
-    }
-    filter = (val) => {
-        //const key = this.state.searchKey;
-        if (val === '')
-            this.setState({ item: Popular });
-        //console.log(val);
-        let arr = Popular.filter(item => {
-
-            if (item.resName.toLowerCase().indexOf(val) !== -1)
-                return item;
-            // for (const key of item) {
-            //     if (item[key].name.indexOf(key) !== -1)
-            //         return item;
-            // }
-            //console.log(item.resName);
-        });
-        this.setState({ items: arr });
-
-
-    }
-    Rating = (value) => {
-        let arr = [];
-        for (let i = 1; i <= value; i++) {
-            arr.push(<AntDesign name={'star'} size={22} style={{ color: 'orange' }} />)
-        }
-        return arr;
-    }
+class History extends Component {
     render() {
-        const { navigation, setResData } = this.props;
         return (
             <View style={{ flex: 1 }}>
-                <View style={styles.header}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, }}>Quán yêu thích</Text>
-                    <View style={styles.searchBar}>
-                        <FontAwesome5 size={23} name={'search'} style={{ marginLeft: 5, marginTop: 8, color: 'lightgray' }} />
-                        <TextInput placeholder='Tìm kiếm'
-                            onChangeText={(val) => this.filter(val.toLowerCase())}
-                            style={{
-                                marginTop: 15,
-
-                                height: 40,
-
-                                color: 'black',
-                                borderRadius: 5,
-                                padding: 5,
-                                flex: 1,
-                            }} />
-                    </View>
-                </View>
+                <Header />
                 <FlatList
-                    data={this.state.items}
+                    data={data}
                     style={styles.list}
                     keyExtractor={(item, idx) => idx}
                     renderItem={({ item }) =>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setResData(item.resName, item.rating, item.time, item.menu, item.address, item.pics),
-                                    navigation.navigate('FoodDetails')
-                            }}
-                            style={styles.sectionItemsBtn}>
-                            <Image style={styles.sectionImg}
-                                source={{ uri: item.pics }}
-                            />
+                        <TouchableOpacity style={styles.sectionItemsBtn}>
+
                             <View style={styles.sectionInf}>
-                                <Text style={{ fontSize: 18, fontWeight: '500', marginBottom: 5 }}>
-                                    {item.resName}
-                                </Text>
+
                                 <Text style={{ fontSize: 12, color: 'lightgray', marginBottom: 5 }}>
-                                    {item.address}
+                                    {item.time}
+                                </Text>
+                                <Text style={{ fontSize: 18, fontWeight: '500', marginBottom: 5 }}>
+                                    {item.cartData.total}
                                 </Text>
 
-                                <View style={{ flexDirection: 'row' }}>
-                                    {this.Rating(item.rating)}
-                                </View>
+
+                                <Text style={{ marginBottom: 5 }}>
+                                    Rating : {item.cartData.amount}
+                                </Text>
+                                <Text style={{ fontWeight: 'bold' }}>
+                                    aaaaa
+                                </Text>
+
 
                             </View>
                         </TouchableOpacity>}
@@ -226,9 +216,4 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     }
 });
-const mapDispatchToProps = (dispatch) => {
-    return {
-        setResData: (name, rating, time, menu, addr, pics) => dispatch({ type: 'SET_RESDATA', name, rating, time, menu, addr, pics })
-    }
-}
-export default connect(null, mapDispatchToProps)(Favorite);
+export default History;

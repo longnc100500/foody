@@ -9,7 +9,8 @@ import {
     StyleSheet,
     Dimensions,
     FlatList,
-    Modal
+    Modal,
+    Alert
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -18,22 +19,19 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
-const data = {
 
-
-}
 const separate = () => <View style={{ width: '100%', height: 1, backgroundColor: 'lightgray', marginVertical: 5 }}></View>
 
 class Order extends Component {
     render() {
 
-        const { navigation, cartData, showModal, hideModal, modalData, increase, decrease, updateFood } = this.props;
+        const { clearCartData, navigation, cartData, showModal, hideModal, modalData, increase, decrease, updateFood } = this.props;
         // console.log(cartData);
         return (
             <View style={styles.container}>
                 <View style={styles.layer}></View>
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Order</Text>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Đặt hàng</Text>
                     <TouchableOpacity
                         onPress={() => navigation.pop()}
                     >
@@ -116,13 +114,13 @@ class Order extends Component {
                 <View style={styles.controlView}>
                     <FlatList
                         data={cartData.items}
-                        keyExtractor={(item) => item.infor.id.toString()}
+                        //keyExtractor={(item) => item.infor.id.toString()}
                         renderItem={({ item }) =>
                             <TouchableOpacity
                                 onPress={() => showModal(item)}
                                 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '600' }}>{item.infor.name}</Text>
-                                <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{item.amount}</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '600' }}>{item.infor.name} x{item.amount}</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{item.amount * item.infor.price}</Text>
                             </TouchableOpacity>
                         }
                         ItemSeparatorComponent={separate}
@@ -135,8 +133,10 @@ class Order extends Component {
 
 
                 </View>
-                <TouchableOpacity style={styles.checkoutBtn}>
-                    <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Checkout</Text>
+                <TouchableOpacity
+                    onPress={() => Alert.alert('Hoàn tất', 'Thanh toán thành công, đơn hàng sẽ được giao tới sau vài tiếng', [{ text: 'Trở về màn hình chính', style: 'default', onPress: () => { clearCartData(), navigation.popToTop() } }])}
+                    style={styles.checkoutBtn}>
+                    <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Thanh toán</Text>
                 </TouchableOpacity>
 
             </View>
@@ -277,6 +277,7 @@ const mapDispatchToProps = (dispatch) => {
         decrease: () => dispatch({ type: 'DECREASE' }),
         addToCartHandle: (item) => dispatch({ type: 'ADD_ITEM', item: item }),
         updateFood: (item) => dispatch({ type: 'UPDATE_FOOD', item: item }),
+        clearCartData: () => dispatch({ type: 'CLEAR_CART_DATA' }),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

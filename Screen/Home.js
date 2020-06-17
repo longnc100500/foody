@@ -12,76 +12,52 @@ import {
     TextInput
 
 } from 'react-native';
+
+import { Popular, Trending, Family, FreeShip } from '../ResData';
+import { connect } from 'react-redux';
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-const sectionData = {
-    title: 'Trending',
-    items: [
-        {
-            foodName: 'Mỳ xào bò',
-            resName: 'Mỳ xào cô bảy',
-            rating: 4,
-            price: 30000
-        },
-        {
-            foodName: 'Bánh mì chả bò',
-            resName: 'Tuấn Mập',
-            rating: 5,
-            price: 20000
-        },
-        {
-            foodName: 'Cơm chiên dương châu',
-            resName: 'Quán cơm 67',
-            rating: 4,
-            price: 50000
-        },
-        {
-            foodName: 'Bún bò Huế',
-            resName: 'Quán quê hương',
-            rating: 3,
-            price: 50000
-        }
 
-    ]
-}
 function renderItem(data) {
     let a = [];
-    data.forEach(e => {
-        let tmp = <Image
-            style={styles.slideImg}
-            source={require('../Pics/home1.jpg')}
-        />
-        a.push(tmp);
-    })
+    a.push(<Image
+        style={styles.slideImg}
+        source={require('../Pics/img1.jpg')}
+    />)
+    a.push(<Image
+        style={styles.slideImg}
+        source={require('../Pics/img2.jpg')}
+    />)
+    a.push(<Image
+        style={styles.slideImg}
+        source={require('../Pics/img3.jpg')}
+    />)
+    a.push(<Image
+        style={styles.slideImg}
+        source={require('../Pics/img4.jpeg')}
+    />)
     return a;
 }
-function renderSectionData(items, navigation) {
+function renderSectionData(items, navigation, setData) {
     let arr = [];
     items.forEach(function (item) {
         let tmp =
             <TouchableOpacity style={styles.sectionItemsBtn}
-                onPress={() => { navigation.navigate('FoodDetails') }}
+                onPress={() => {
+                    setData(item.resName, item.rating, item.time, item.menu, item.address, item.pics),
+                        navigation.navigate('FoodDetails')
+                }}
             >
                 <Image style={styles.sectionImg}
-                    source={require('../Pics/home1.jpg')}
+                    source={{ uri: item.pics }}
                 />
                 <View style={styles.sectionInf}>
-                    <Text style={{ fontSize: 18, fontWeight: '500' }}>
-                        {item.foodName}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: 'lightgray' }}>
+                    <Text style={{ fontSize: 15, fontWeight: '700' }}>
                         {item.resName}
                     </Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', bottom: 2, width: '100%', position: 'absolute', }}>
-                        <Text>
-                            Rating : {item.rating}
-                        </Text>
-                        <Text style={{ fontWeight: 'bold' }}>
-                            {item.price}
-                        </Text>
-                    </View>
+
                 </View>
             </TouchableOpacity>
 
@@ -92,17 +68,14 @@ function renderSectionData(items, navigation) {
 
 }
 
-const Section = ({ title, items, navigation }) =>
+const Section = ({ title, items, navigation, setData }) =>
     <View style={styles.sectionContainer}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10, paddingRight: 20 }}>
             <Text style={{ fontWeight: '700', fontSize: 17 }}>{title}</Text>
-            <TouchableOpacity>
-                <Text style={{ color: 'red' }}>View All</Text>
-            </TouchableOpacity>
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {renderSectionData(items, navigation)}
+            {renderSectionData(items, navigation, setData)}
         </ScrollView>
     </View>
 class Home extends Component {
@@ -118,12 +91,13 @@ class Home extends Component {
     }
 
     render() {
+        const { setResData } = this.props;
         return (
             <View style={{ flex: 1 }}>
 
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Browse</Text>
-                    <TextInput placeholder='Place, food , ect.'
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Khám phá</Text>
+                    <TextInput placeholder='Tìm kiếm'
                         style={{
                             marginTop: 10,
                             width: '100%',
@@ -147,20 +121,20 @@ class Home extends Component {
                             pagingEnabled
                             showsHorizontalScrollIndicator
                         >
-                            {renderItem(data)}
+                            {renderItem()}
                         </ScrollView>
                     </View>
                     <View style={styles.sectionView}>
-                        <Section title={sectionData.title} items={sectionData.items} navigation={this.props.navigation} />
+                        <Section title='Xu hướng' items={Trending} navigation={this.props.navigation} setData={setResData} />
                     </View>
                     <View style={styles.sectionView}>
-                        <Section title='Popular' items={sectionData.items} navigation={this.props.navigation} />
+                        <Section title='Phổ biến' items={Popular} navigation={this.props.navigation} setData={setResData} />
                     </View>
                     <View style={styles.sectionView}>
-                        <Section title='Free Ship' items={sectionData.items} navigation={this.props.navigation} />
+                        <Section title='Miễn phí vận chuyển' items={FreeShip} navigation={this.props.navigation} setData={setResData} />
                     </View>
                     <View style={styles.sectionView}>
-                        <Section title='Family' items={sectionData.items} navigation={this.props.navigation} />
+                        <Section title='Dành cho gia đình' items={Family} navigation={this.props.navigation} setData={setResData} />
                     </View>
 
                 </ScrollView>
@@ -197,7 +171,7 @@ const styles = StyleSheet.create({
         //flex: 1,
         width: screenWidth,
         height: 200,
-        resizeMode: 'center',
+        resizeMode: 'stretch',
     },
     sectionItemsBtn: {
         flex: 1,
@@ -218,7 +192,7 @@ const styles = StyleSheet.create({
     },
     sectionView: {
         width: screenWidth,
-        height: screenHeight * 0.3,
+        height: screenHeight * 0.35,
     },
     sectionContainer: {
 
@@ -228,14 +202,20 @@ const styles = StyleSheet.create({
         flex: 3,
         width: null,
         height: null,
-        resizeMode: 'center'
+        resizeMode: 'stretch'
 
     },
     sectionInf: {
-        flex: 2,
+        flex: 1,
         padding: 5,
         //borderWidth: 1,
         //borderColor: 'black',
     }
 });
-export default Home;
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setResData: (name, rating, time, menu, addr, pics) => dispatch({ type: 'SET_RESDATA', name, rating, time, menu, addr, pics })
+    }
+}
+export default connect(null, mapDispatchToProps)(Home);

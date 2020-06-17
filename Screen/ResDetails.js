@@ -38,16 +38,28 @@ const alertUser = (clearCart, navigation) => Alert.alert('Rời khỏi nhà hàn
 const renderItems = (items, showModal) => {
 
     let arr = [];
+    // console.log(items[0].name);
     arr = items.map(item =>
         <TouchableOpacity style={styles.foodBtn}
-            onPress={() => showModal(item)}
+            onPress={() => {
+                //console.log(item);
+                let newItem = {
+                    amount: 1,
+                    infor: {
+                        id: item.foodId,
+                        name: item.name,
+                        price: item.price
+                    }
+                }
+                showModal(newItem)
+            }}
         >
             <Image
-                source={require('../Pics/login.jpg')}
+                source={{ uri: item.pics }}
                 style={styles.btnImg}
             />
-            <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.name}</Text>
-            <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
+            <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.name}</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.price}</Text>
         </TouchableOpacity>
     )
     return arr;
@@ -80,31 +92,33 @@ class ResDetails extends Component {
         this.CartButton = this.CartButton.bind(this);
 
     }
-
-    componentDidMount() {
-        //console.log(this.props.modalData);
-        return true;
-    }
-
     CartButton = (amount, navigation) => {
         if (amount !== 0) {
             return <TouchableOpacity style={styles.addToCartBtn}
                 onPress={() => navigation.navigate('Order')}
             >
-                <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Gio hang : {this.props.cartData.amount}</Text>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Giỏ hàng : {this.props.cartData.amount}</Text>
             </TouchableOpacity>
 
         }
         else
             return <View></View>
     }
+    Rating = (value) => {
+        let arr = [];
+        for (let i = 1; i <= value; i++) {
+            arr.push(<AntDesign name={'star'} size={25} style={{ color: 'orange' }} />)
+        }
+        return arr;
+    }
     render() {
-        const { modalData, showModal, hideModal, navigation, like, likeHandle, unlikeHandle, increase, decrease, addToCartHandle, resMenu, clearCartData, cartData } = this.props;
+        const { resData, modalData, showModal, hideModal, navigation, like, likeHandle, unlikeHandle, increase, decrease, addToCartHandle, resMenu, clearCartData, cartData } = this.props;
         //const modalData = { name: 'Thit bo xao hanh', price: '50.000', currentAmount: 0, };
+        //console.log('Resdetail: ', resData.name);
         return (
 
             <View style={styles.container} >
-                <Header title={data.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} clearCart={clearCartData} cartData={cartData} />
+                <Header title={resData.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} clearCart={clearCartData} cartData={cartData} />
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -130,7 +144,7 @@ class ResDetails extends Component {
                                 hideModal()
                             }}
                         >
-                            <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Thêm vào giỏ sklldksjglds hàng</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: 'white' }}>Thêm vào giỏ hàng</Text>
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', width: '80%', height: 100, marginTop: 30, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                             <TouchableOpacity
@@ -158,34 +172,21 @@ class ResDetails extends Component {
                     <View style={styles.mainView}>
                         <Image
                             style={styles.avatarImg}
-                            source={require('../Pics/login.jpg')}
+                            source={{ uri: resData.pics }}
                         />
-                        <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 5 }}>{data.name}</Text>
-                        <Text style={{ padding: 5 }}>{data.rating}</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 5 }}>{resData.name}</Text>
+                        <Text style={{ padding: 5 }}>{resData.addr}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            {this.Rating(resData.rating)}
+                        </View>
+                        <Text style={{ fontWeight: 'bold', padding: 5 }}>Giờ làm việc : {resData.time} </Text>
 
-                        <Text style={{ fontWeight: 'bold', padding: 5 }}>Mở cửa: {data.start}</Text>
-                        <Text style={{ fontWeight: 'bold', padding: 5 }}>Đóng cửa: {data.end}</Text>
 
                         <View style={{ width: screenWidth, height: 1, backgroundColor: 'lightgray', marginVertical: 10 }}></View>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', padding: 5 }}>Menu</Text>
                         <View style={styles.mainMenu}>
-                            {/* {renderItems(data.menu, this.showModal)} */}
                             {renderItems(resMenu, showModal)}
-                            {/* <FlatList
-                                data={resMenu}
-                                numColumns={2}
-                                keyExtractor={(item) => item.infor.id.toString()}
-                                renderItem={({ item }) => <TouchableOpacity style={styles.foodBtn}
-                                    onPress={() => showModal(item)}
-                                >
-                                    <Image
-                                        source={require('../Pics/login.jpg')}
-                                        style={styles.btnImg}
-                                    />
-                                    <Text style={{ marginVertical: 8, fontSize: 15, marginLeft: 10 }} >{item.infor.name}</Text>
-                                    <Text style={{ fontWeight: 'bold', fontSize: 15, marginLeft: 10 }}>{item.infor.price}</Text>
-                                </TouchableOpacity>}
-                            /> */}
+
                         </View>
                     </View>
                 </ScrollView>
@@ -301,6 +302,7 @@ const mapStateToProps = (state) => {
         cartData: state.resDetails.cart,
         like: state.resDetails.like,
         modalData: state.modal,
+        resData: state.resDetails
     }
 }
 const mapDispatchToProps = (dispatch) => {

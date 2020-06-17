@@ -1,4 +1,4 @@
-import { ADD_ITEM, SUB_ITEM, REMOVE_ITEM, SHOW_MODAL, HIDE_MODAL, UPDATE_FOOD, CLEAR_CART_DATA } from './actionTypes';
+import { SET_RESDATA, SET_USER_LIST, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, SHOW_MODAL, HIDE_MODAL, UPDATE_FOOD, CLEAR_CART_DATA, LOG_IN, LOG_OUT, ADD_TO_HISTORY, SIGN_UP } from './actionTypes';
 export const addItem = item => ({
     type: ADD_ITEM,
     item: item,
@@ -26,4 +26,39 @@ export const updateFood = (item) => ({
 })
 export const clearCartData = () => ({
     type: CLEAR_CART_DATA,
+})
+export const login = (email, pass, liked, history) => ({
+    type: LOG_IN,
+    email: email,
+    pass: pass,
+    liked: liked,
+    history: history,
+})
+export const logout = () => ({
+    type: LOG_OUT,
+})
+export const addToHistory = (data) => ({
+    type: ADD_TO_HISTORY,
+    data: data
+})
+export const signUp = (pass, email, firstName, lastName) => ({
+    type: SIGN_UP,
+    email,
+    pass,
+    firstName,
+    lastName,
+})
+export const setUsersList = (users) => ({
+    type: SET_USER_LIST,
+    users
+})
+export const setResData = (name, rating, time, menu, addr, pics) => ({
+    type: SET_RESDATA,
+    name,
+    rating,
+    time,
+    menu,
+    addr,
+    pics
+
 })

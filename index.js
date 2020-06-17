@@ -13,4 +13,5 @@ import ResDetails from './Screen/ResDetails';
 import UserProfile from './Screen/UserProfile';
 import Order from './Screen/Order';
 import Saved from './Screen/Saved';
+import History from './Screen/History';
 AppRegistry.registerComponent(appName, () => App);

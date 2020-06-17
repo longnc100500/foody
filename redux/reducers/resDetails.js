@@ -1,4 +1,4 @@
-import { LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD, CLEAR_CART_DATA } from '../actionTypes';
+import { SET_RESDATA, LIKE, UNLIKE, ADD_ITEM, SUB_ITEM, REMOVE_ITEM, UPDATE_FOOD, CLEAR_CART_DATA } from '../actionTypes';
 const initialState = {
     like: false,
     cart: {
@@ -6,47 +6,13 @@ const initialState = {
         amount: 0,
         items: []
     },
+    name: '',
+    addr: '',
+    time: '',
+    pics: '',
+    rating: 0,
     menu: [
-        {
-            amount: 1,
-            infor: {
-                id: 1,
-                name: 'Mì Ý',
-                price: 40000,
-            }
-        },
-        {
-            amount: 1,
-            infor: {
-                id: 2,
-                name: 'Nui xào bò',
-                price: 54000,
-            }
-        },
-        {
-            amount: 1,
-            infor: {
-                id: 3,
-                name: 'Mỳ xào hải sản',
-                price: 30000,
-            }
-        },
-        {
-            amount: 1,
-            infor: {
-                id: 4,
-                name: 'Mỳ thêm',
-                price: 5000,
-            }
-        },
-        {
-            amount: 1,
-            infor: {
-                id: 5,
-                name: 'Bò thêm',
-                price: 15000,
-            }
-        }
+
     ]
 }
 var it = {
@@ -81,6 +47,7 @@ export default function (state = initialState, action) {
                 }
             })
             let newCart = { ...state.cart };
+            console.log(action.item);
             if (t == 0) {
 
                 newCart.amount += action.item.amount;
@@ -144,7 +111,7 @@ export default function (state = initialState, action) {
             let newCart = { ...state.cart };
             let oldItem;
             newCart.items.forEach(item => {
-                if (item.infor.id === action.item.infor.id)
+                if (item.infor.name === action.item.infor.name)
                     oldItem = item;
             })
 
@@ -174,6 +141,19 @@ export default function (state = initialState, action) {
                     amount: 0,
                     items: []
                 },
+            }
+        }
+        case SET_RESDATA: {
+            console.log('set resdata successfull ! ');
+            console.log(action);
+            return {
+                ...state,
+                name: action.name,
+                rating: action.rating,
+                time: action.time,
+                menu: action.menu,
+                addr: action.addr,
+                pics: action.pics
             }
         }
         default: {

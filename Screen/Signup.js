@@ -5,10 +5,34 @@ import {
     Text,
     TextInput,
     StyleSheet,
-    ImageBackground
+    ImageBackground,
+    Alert
 
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+import { connect } from 'react-redux';
+
 class Signup extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            firstName: '',
+            lastName: '',
+            pass: '',
+            pass2: '',
+
+        }
+    }
+    checkAccount = (navigation, signup) => {
+        if (this.state.email.indexOf('@gmail.com') === -1 || this.state.firstName === '' || this.state.lastName === '' || this.state.pass !== this.state.pass2)
+            Alert.alert('Tài khoản không hợp lệ', 'Kiểm tra lại thông tin tài khoản', [{ text: 'Đồng ý', style: 'default' }])
+        else {
+            Alert.alert('Hoàn tất', 'Đăng ký tài khoản thành công', [{ text: 'Trở về màn hình đăng nhập', style: 'default', onPress: () => navigation.pop() }])
+            signup(this.state.email, this.state.pass, this.state.firstName, this.state.lastName);
+        }
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -17,25 +41,43 @@ class Signup extends Component {
                         <Text style={styles.welcome}>Sign up</Text>
 
 
-                        <TextInput style={styles.firstName} placeholderTextColor='lightgray' placeholder='First name' keyboardType='email-address' />
-                        <TextInput style={styles.lastName} placeholderTextColor='lightgray' placeholder='Last name' />
-                        <TextInput style={styles.accInf} placeholderTextColor='lightgray' placeholder='Email' keyboardType='email-address' />
-                        <TextInput style={styles.passW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Password' />
-                        <TextInput style={styles.confirmPassW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Confirm password' />
+                        <TextInput
+                            onChangeText={(value) => this.setState({ firstName: value })}
+                            style={styles.firstName} placeholderTextColor='lightgray' placeholder='First name' keyboardType='email-address' />
+                        <TextInput
+                            onChangeText={(value) => this.setState({ lastName: value })}
+                            style={styles.lastName} placeholderTextColor='lightgray' placeholder='Last name' />
+                        <TextInput
+                            onChangeText={(value) => this.setState({ email: value })}
+                            style={styles.accInf} placeholderTextColor='lightgray' placeholder='Email' keyboardType='email-address' />
+                        <TextInput
+                            onChangeText={(value) => this.setState({ pass: value })}
+                            style={styles.passW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Password' />
+                        <TextInput
+
+                            onChangeText={(value) => this.setState({ pass2: value })}
+                            style={styles.confirmPassW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Confirm password' />
                     </View>
                     <View style={styles.bottomView}>
-                        <TouchableOpacity style={styles.signupBtn} activeOpacity={0.7} >
+                        <TouchableOpacity
+                            onPress={() => this.checkAccount(this.props.navigation, this.props.signup)}
+
+                            style={styles.signupBtn} activeOpacity={0.7} >
                             <Text style={styles.btnText}>Sign up</Text>
 
                         </TouchableOpacity>
+                        <TouchableOpacity onPress={() => this.props.navigation.pop()}>
+                            <Ionicons name={'ios-arrow-dropleft'} color={'white'} size={30}></Ionicons>
+                        </TouchableOpacity>
                     </View>
+
                 </ImageBackground>
 
             </View>
         )
     }
 }
-export default Signup;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -50,7 +92,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.1)',
     },
     topView: {
-        flex: 3,
+        flex: 5,
         paddingBottom: 50,
         paddingLeft: 30,
         paddingRight: 30,
@@ -170,3 +212,7 @@ const styles = StyleSheet.create({
         color: 'white'
     }
 });
+const mapDispatchToProps = (dispatch) => ({
+    signup: (email, pass, firstName, lastName) => dispatch({ type: 'SIGN_UP', email, pass, firstName, lastName })
+})
+export default connect(null, mapDispatchToProps)(Signup);

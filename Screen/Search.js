@@ -14,131 +14,99 @@ import {
 } from 'react-native';
 import { CommonActions, StackActions } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { connect } from 'react-redux';
+
+import { res } from '../ResData';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-const sectionData = {
-    title: 'Trending',
-    items: [
-        {
-            foodName: 'Mỳ xào bò',
-            resName: 'Mỳ xào cô bảy',
-            rating: 4,
-            price: 30000
-        },
-        {
-            foodName: 'Bánh mì chả bò',
-            resName: 'Tuấn Mập',
-            rating: 5,
-            price: 20000
-        },
-        {
-            foodName: 'Cơm chiên dương châu',
-            resName: 'Quán cơm 67',
-            rating: 4,
-            price: 50000
-        },
-        {
-            foodName: 'Bún bò Huế',
-            resName: 'Quán quê hương',
-            rating: 3,
-            price: 50000
-        }
-
-    ]
-}
-
-function renderSectionData(items) {
-    let arr = [];
-    items.forEach(function (item) {
-        let tmp =
-            <TouchableOpacity style={styles.sectionItemsBtn}>
-                <Image style={styles.sectionImg}
-                    source={require('../Pics/home1.jpg')}
-                />
-                <View style={styles.sectionInf}>
-                    <Text style={{ fontSize: 18, fontWeight: '500' }}>
-                        {item.foodName}
-                    </Text>
-                    <Text style={{ fontSize: 12, color: 'lightgray' }}>
-                        {item.resName}
-                    </Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', bottom: 2, width: '100%', position: 'absolute', }}>
-                        <Text>
-                            Rating : {item.rating}
-                        </Text>
-                        <Text style={{ fontWeight: 'bold' }}>
-                            {item.price}
-                        </Text>
-                    </View>
-                </View>
-            </TouchableOpacity>
-
-        arr.push(tmp);
-    });
-    return arr;
-
-
-}
-const Header = ({ navigation }) =>
-    <View style={styles.header}>
-        <TouchableOpacity style={{ marginRight: 10 }}
-            onPress={() => navigation.pop()}
-
-        >
-            <MaterialIcons name={'keyboard-arrow-left'} size={40} color='white' />
-        </TouchableOpacity>
-        <TextInput placeholder='Place, food , ect.'
-            style={{
-                width: screenWidth * 0.8,
-                height: 40,
-                backgroundColor: 'white',
-                color: 'black',
-                borderRadius: 5,
-                padding: 5,
-            }} />
-    </View>
-
-class Home extends Component {
+class Search extends Component {
     constructor(props) {
         super(props);
-        const navigation = this.props.navigation;
+        this.state = { items: res }
     }
-    componentDidMount() {
-        console.log('I did mount');
-        return 1;
+    filter = (val) => {
+        //const key = this.state.searchKey;
+        if (val === '')
+            this.setState({ item: res });
+        //console.log(val);
+        let arr = res.filter(item => {
+
+            if (item.resName.toLowerCase().indexOf(val) !== -1)
+                return item;
+            // for (const key of item) {
+            //     if (item[key].name.indexOf(key) !== -1)
+            //         return item;
+            // }
+            //console.log(item.resName);
+        });
+        this.setState({ items: arr });
+
+
     }
-    componentWillUnmount() {
-        console.log('I will unmount');
-        return 1;
+    Rating = (value) => {
+        let arr = [];
+        for (let i = 1; i <= value; i++) {
+            arr.push(<AntDesign name={'star'} size={20} style={{ color: 'orange' }} />)
+        }
+        return arr;
     }
     render() {
+        const { navigation, setResData } = this.props;
         return (
             <View>
-                <Header navigation={this.props.navigation} />
+                <View style={styles.header}>
+                    <TouchableOpacity style={{ marginRight: 10 }}
+                        onPress={() => this.props.navigation.pop()}
+
+                    >
+                        <MaterialIcons name={'keyboard-arrow-left'} size={40} color='white' />
+                    </TouchableOpacity>
+                    <TextInput placeholder='Tìm kiếm'
+                        onChangeText={(value) => {
+
+                            this.filter(value.toLowerCase())
+
+                        }
+                        }
+                        style={{
+                            width: screenWidth * 0.8,
+                            height: 40,
+                            backgroundColor: 'white',
+                            color: 'black',
+                            borderRadius: 5,
+                            padding: 5,
+                        }} />
+                </View>
                 <FlatList
-                    data={sectionData.items}
+                    data={this.state.items}
                     style={styles.list}
                     keyExtractor={(item, idx) => idx}
                     renderItem={({ item }) =>
-                        <TouchableOpacity style={styles.sectionItemsBtn}>
+                        <TouchableOpacity style={styles.sectionItemsBtn}
+                            onPress={() => {
+                                setResData(item.resName, item.rating, item.time, item.menu, item.address, item.pics),
+                                    navigation.navigate('FoodDetails')
+                            }}
+
+                        >
                             <Image style={styles.sectionImg}
-                                source={require('../Pics/home1.jpg')}
+                                source={{ uri: item.pics }}
                             />
                             <View style={styles.sectionInf}>
                                 <Text style={{ fontSize: 18, fontWeight: '500', marginBottom: 5 }}>
-                                    {item.foodName}
-                                </Text>
-                                <Text style={{ fontSize: 12, color: 'lightgray', marginBottom: 5 }}>
                                     {item.resName}
                                 </Text>
-
-                                <Text style={{ marginBottom: 5 }}>
-                                    Rating : {item.rating}
+                                <Text style={{ fontSize: 12, color: 'lightgray', marginBottom: 5 }}>
+                                    {item.address}
                                 </Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    {this.Rating(item.rating)}
+                                </View>
+
                                 <Text style={{ fontWeight: 'bold' }}>
-                                    {item.price}
+                                    {item.menu[0].price}
                                 </Text>
 
                             </View>
@@ -171,7 +139,7 @@ const styles = StyleSheet.create({
     sectionItemsBtn: {
         flexDirection: 'row',
         width: '100%',
-        height: screenHeight * 0.15,
+        height: screenHeight * 0.18,
         margin: 10,
         marginBottom: 10,
         padding: 10,
@@ -210,4 +178,9 @@ const styles = StyleSheet.create({
         //borderColor: 'black',
     }
 });
-export default Home;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setResData: (name, rating, time, menu, addr, pics) => dispatch({ type: 'SET_RESDATA', name, rating, time, menu, addr, pics })
+    }
+}
+export default connect(null, mapDispatchToProps)(Search);

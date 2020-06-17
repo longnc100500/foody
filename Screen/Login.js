@@ -5,31 +5,108 @@ import {
     TouchableOpacity,
     StyleSheet,
     TextInput,
-    ImageBackground
+    ImageBackground,
+    Alert
 } from 'react-native';
-
+import { firebaseApp } from '../redux/firebaseConfig';
+import { connect } from 'react-redux';
 class Login extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { email: '', pass: '' };
+
+    }
+    // updateUsers = () => {
+    //     firebaseApp.database().ref('users').once('value', (snap) => {
+    //         console.log(snap.val());
+    //     })
+    // }
+    componentDidMount() {
+
+        firebaseApp.database().ref('users').once('value')
+            .then(data => {
+                this.props.setUserList(data.val());
+            })
+
+
+        return true;
+    }
+    check = (userList = {}, navigation) => {
+        if (this.state.email === '' || this.state.pass === '') {
+            Alert.alert('Lỗi đăng nhập', 'Vui lòng nhập đầy đủ thông tin', [{ text: 'Đồng ý', style: 'cancel' }])
+            return;
+        }
+        if (this.state.email.indexOf('@gmail.com') === -1) {
+
+            Alert.alert('Lỗi đăng nhập', 'Vui lòng nhập đúng email', [{ text: 'Đồng ý', style: 'cancel' }])
+            return;
+        }
+        if (userList['Admin'] === undefined) {
+            Alert.alert('LỖI ĐĂNG NHẬP', 'Kiểm tra kết nối mạng hoặc đợi trong giây lát')
+        } else {
+            for (const key in userList) {
+                if (userList[key].email === this.state.email) {
+                    if (userList[key].pass === this.state.pass) {
+
+                        let fn = userList[key].firstName;
+                        let ln = userList[key].lastName;
+                        this.props.login(this.state.email, this.state.pass, [], [], fn, ln);
+                        navigation.navigate('allTab');
+                        return;
+                    }
+
+                }
+
+
+            }
+
+            Alert.alert('Lỗi đăng nhập', 'Sai tài khoản hoặc mật khẩu', [{ text: 'Đồng ý', style: 'cancel' }])
+
+        }
+
+
+    }
     render() {
+
+        const { navigation, setUserList, userList } = this.props;
+        //console.log(userList);
         return (
             <View style={styles.container}>
                 <ImageBackground source={require('../Pics/login2.jpg')} style={styles.background}>
                     <View style={styles.topView}>
-                        <Text style={styles.welcome}>Welcome</Text>
-                        <Text style={styles.loginTo}>Sign in to continue</Text>
-                        <TextInput style={styles.accInf} placeholderTextColor='lightgray' placeholder='Email or phone number' keyboardType='email-address' />
-                        <TextInput style={styles.passW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Password' />
+                        <Text style={styles.welcome}>Xin chào</Text>
+                        <Text style={styles.loginTo}>Đăng nhập để tiếp tục</Text>
+                        <TextInput
+                            onChangeText={(value) => this.setState({ email: value })}
+
+                            style={styles.accInf} placeholderTextColor='lightgray' placeholder='Email' keyboardType='email-address' />
+                        <TextInput
+                            onChangeText={(value) => this.setState({ pass: value })}
+
+                            style={styles.passW} placeholderTextColor='lightgray' secureTextEntry={true} placeholder='Mật khẩu' />
                     </View>
                     <View style={styles.bottomView}>
-                        <TouchableOpacity style={styles.loginBtn} activeOpacity={0.7} >
-                            <Text style={styles.btnText}>Sign in</Text>
+                        <TouchableOpacity
+                            onPress={() => this.check(userList, navigation)}
+
+                            style={styles.loginBtn} activeOpacity={0.7} >
+                            <Text style={styles.btnText}>Đăng nhập</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.signupBtn} activeOpacity={0.7} >
-                            <Text style={styles.btnText}>Sign up</Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setUserList(this.state.users),
+                                    navigation.navigate('Signup')
+
+                            }}
+                            style={styles.signupBtn} activeOpacity={0.7} >
+                            <Text style={styles.btnText}>Đăng ký</Text>
                         </TouchableOpacity>
                         <TouchableOpacity activeOpacity={0.5}>
-                            <Text style={{ marginTop: 20, fontSize: 15, fontWeight: '400', color: 'white' }}>Forgot your password?</Text>
+                            <Text style={{ marginTop: 20, fontSize: 15, fontWeight: '400', color: 'white' }}>Quên mật khẩu</Text>
                         </TouchableOpacity>
                     </View>
+
+
                 </ImageBackground>
 
             </View>
@@ -130,4 +207,15 @@ const styles = StyleSheet.create({
     }
 
 });
-export default Login;
+const mapStateToProps = (state) => {
+    return {
+        userList: state.user.users,
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setUserList: (userList) => dispatch({ type: 'SET_USER_LIST', users: userList }),
+        login: (email, pass, liked, history, firstName, lastName) => dispatch({ type: 'LOG_IN', email, pass, liked, history, firstName, lastName })
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
