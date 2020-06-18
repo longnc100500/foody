@@ -96,7 +96,7 @@ class Home extends Component {
             <View style={{ flex: 1 }}>
 
                 <View style={styles.header}>
-                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Khám phá</Text>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white', marginTop: 20 }}>Khám phá</Text>
                     <TextInput placeholder='Tìm kiếm'
                         style={{
                             marginTop: 10,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     sectionView: {
         width: screenWidth,
-        height: screenHeight * 0.35,
+        height: screenHeight * 0.3,
     },
     sectionContainer: {
 

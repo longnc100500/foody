@@ -12,6 +12,7 @@ import {
     TextInput,
     Modal,
     Alert,
+    StatusBar
 
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -118,6 +119,7 @@ class ResDetails extends Component {
         return (
 
             <View style={styles.container} >
+                <StatusBar hidden />
                 <Header title={resData.name} navigation={navigation} likeStatus={like} like={likeHandle} unlike={unlikeHandle} clearCart={clearCartData} cartData={cartData} />
                 <Modal
                     animationType="slide"
@@ -205,10 +207,11 @@ const styles = StyleSheet.create({
     },
     header: {
         width: screenWidth,
-        height: screenHeight * 0.1,
+        height: screenHeight * 0.12,
         backgroundColor: '#ed185f',
         flexDirection: 'row',
         padding: 10,
+        paddingTop: 50,
         alignItems: 'center',
         justifyContent: 'space-between'
     },

@@ -10,7 +10,7 @@ import {
     Dimensions,
     FlatList,
     Modal,
-    Alert
+    Alert, StatusBar
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -29,6 +29,7 @@ class Order extends Component {
         // console.log(cartData);
         return (
             <View style={styles.container}>
+                <StatusBar hidden />
                 <View style={styles.layer}></View>
                 <View style={styles.header}>
                     <Text style={{ fontSize: 40, fontWeight: 'bold', color: 'white' }}>Đặt hàng</Text>
@@ -92,23 +93,23 @@ class Order extends Component {
                 <View style={styles.userInf}>
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5 }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Subtotal</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total}$</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Tổng cộng</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total} đ</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 5 }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Tax & fees</Text>
-                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{2}$</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Phí khác</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{2} đ</Text>
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Delivery</Text>
+                            <Text style={{ fontSize: 20, fontWeight: '600' }}>Phí vận chuyển</Text>
                             <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>Free</Text>
                         </View>
                         <Text style={{ color: '#DAD9E2' }}></Text>
                     </View>
                     <View style={{ backgroundColor: '#DAD9E2', width: '100%', height: 1, marginBottom: 10, }}></View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={{ fontSize: 20, fontWeight: '600' }}>Total</Text>
-                        <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total + 2}$</Text>
+                        <Text style={{ fontSize: 20, fontWeight: '600' }}>Tổng cộng</Text>
+                        <Text style={{ fontSize: 20, fontWeight: '600', color: '#FF9500' }}>{cartData.total + 2} đ</Text>
                     </View>
                 </View>
                 <View style={styles.controlView}>

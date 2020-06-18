@@ -6,7 +6,8 @@ import {
     StyleSheet,
     TextInput,
     ImageBackground,
-    Alert
+    Alert,
+    StatusBar
 } from 'react-native';
 import { firebaseApp } from '../redux/firebaseConfig';
 import { connect } from 'react-redux';
@@ -72,6 +73,7 @@ class Login extends Component {
         //console.log(userList);
         return (
             <View style={styles.container}>
+                <StatusBar hidden />
                 <ImageBackground source={require('../Pics/login2.jpg')} style={styles.background}>
                     <View style={styles.topView}>
                         <Text style={styles.welcome}>Xin chào</Text>

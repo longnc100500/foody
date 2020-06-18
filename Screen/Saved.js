@@ -9,8 +9,8 @@ import {
     Image,
     TouchableHighlight,
     Dimensions,
-    TextInput
-
+    TextInput,
+    StatusBar
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -102,8 +102,9 @@ class Favorite extends Component {
         const { navigation, setResData } = this.props;
         return (
             <View style={{ flex: 1 }}>
+                <StatusBar hidden />
                 <View style={styles.header}>
-                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, }}>Quán yêu thích</Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, marginTop: 20 }}>Quán yêu thích</Text>
                     <View style={styles.searchBar}>
                         <FontAwesome5 size={23} name={'search'} style={{ marginLeft: 5, marginTop: 8, color: 'lightgray' }} />
                         <TextInput placeholder='Tìm kiếm'

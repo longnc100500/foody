@@ -379,7 +379,7 @@ export const res = [
         ]
     },
     {
-        resName: 'NiNi Bakery – Bánh Kem Pháp – Nguyễn Gia Trí',
+        resName: 'Bánh Kem Pháp – Nguyễn Gia Trí',
         resID: '950',
         address: '485 Sư Vạn Hạnh, P.12, Quận 10, TP. HCM',
         time: '9:30 – 21:30',
@@ -632,7 +632,7 @@ export const Popular = [
         ]
     },
     {
-        resName: 'NiNi Bakery – Bánh Kem Pháp – Nguyễn Gia Trí',
+        resName: 'Bánh Kem Pháp – Nguyễn Gia Trí',
         resID: '950',
         address: '485 Sư Vạn Hạnh, P.12, Quận 10, TP. HCM',
         time: '9:30 – 21:30',
